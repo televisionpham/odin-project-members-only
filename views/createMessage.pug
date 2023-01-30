@@ -1,0 +1,9 @@
+extends index
+block main
+    h5 Create new message
+    form(action="/message/create", method="post")
+        label(for="title", class="form-label") Title:
+        input#title(type="text", name="title", class="form-control", required)
+        label(for="text", class="form-label") Text:
+        textarea#text(name="text", cols="30", rows="10", class="form-control")
+        button(type="submit" class="btn btn-primary") Submit

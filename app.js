@@ -10,6 +10,10 @@ const LocalStrategy = require("passport-local").Strategy;
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+const messageRouter = require("./routes/message");
+
+const User = require("./models/user");
+const bcrypt = require("bcryptjs");
 
 var app = express();
 
@@ -34,6 +38,36 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+passport.use(
+  new LocalStrategy((username, password, done) => {
+    console.log({ username, password });
+    User.findOne({ username: username }, (err, user) => {
+      if (err) {
+        return done(err);
+      }
+      if (!user) {
+        return done(null, false, { message: "Incorrect username" });
+      }
+
+      bcrypt.compare(password, user.password, (err, res) => {
+        if (res) {
+          // passwords match! log user in
+          return done(null, user);
+        } else {
+          // passwords do not match!
+          return done(null, false, { message: "Incorrect password" });
+        }
+      });
+    });
+  })
+);
+
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser((id, done) =>
+  User.findById(id, (err, user) => done(err, user))
+);
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -45,6 +79,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/message", messageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

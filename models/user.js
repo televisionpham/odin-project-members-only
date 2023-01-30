@@ -15,12 +15,22 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  firstName: String,
-  lastName: String,
+  firstname: {
+    type: String,
+    required: true,
+  },
+  lastname: {
+    type: String,
+    required: true,
+  },
+  admin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-UserSchema.virtual("fullName").get(function () {
-  return `${this.firstName} ${this.lastName}`;
+UserSchema.virtual("fullname").get(function () {
+  return `${this.firstname} ${this.lastname}`;
 });
 
 module.exports = mongoose.model("User", UserSchema);

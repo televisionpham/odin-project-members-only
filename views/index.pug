@@ -1,5 +1,38 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  nav(class="navbar navbar-light bg-light")
+    div(class="container-fluid")
+      div
+        a(class="navbar-brand", href="/") Members Only
+        if user 
+          if !user.member
+            a(class="btn btn-success", href="/users/join") Join
+          else
+            a(class="btn btn-success", href="/message/create") Create Message
+      ul(class="nav")
+        if user
+          li(class="nav-item")
+            form(action="/users/logout", method='post')
+              button(type="submit", class="btn btn-primary") Logout
+        else
+          li(class="nav-item")
+            a(class="nav-link", href="/users/register") Register
+          li(class="nav-item")
+            a(class="nav-link", href="/users/login") Login            
+  block main    
+    each message in messages
+      div(class='card')
+        div(class='card-body')
+          if user
+            h5(class='card-title')=message.user.fullname          
+            h6(class='card-text')=message.title
+            if user.member
+              p(class='card-text')=message.text          
+            small(class='card-text text-muted')=message.timestamp    
+            if user.admin
+              form(method='post', action=`/message/${message.id}/delete`)
+                button(type='submit', class='btn btn-danger') Delete
+          else          
+            h6(class='card-text')=message.title
+            p(class='card-text')=message.text          

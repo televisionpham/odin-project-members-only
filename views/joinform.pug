@@ -1,0 +1,7 @@
+extends index
+block main
+    h3 Enter the code to join the club
+    form(action="/users/join", method="post")
+        label(for="passcode", class="form-label") Code:
+            input#passcode(type="password", name="passcode", class="form-control", required)    
+            button(type="submit", class="btn btn-primary") Submit
